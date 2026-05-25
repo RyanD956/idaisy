@@ -1,0 +1,12 @@
+Package: idaisy
+Title: A helper package for running daisy simulations in R with a structured workflow
+Version: 0.0.0.9000
+Authors@R: 
+    person("Ryan", "Douglas", email = "ryan.douglas@hutton.ac.uk", role = c("aut", "cre"))
+Description: A helper package for running daisy simulations in R with a structured workflow.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: data.table, furrr, future, janitor, readr, whisker, withr
+Depends: R (>= 4.1.0)
