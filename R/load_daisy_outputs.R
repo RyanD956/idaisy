@@ -7,7 +7,7 @@
 #' @importFrom tools file_path_sans_ext
 #' @param dir Directory containing the Daisy simulation outputs. The function will search for .dlf files in all subdirectories. Expected structure is dir/sim_name/outputsfile.dlf; sim_name is derived from two levels above each .dlf file.
 #' @param required_outputs A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.
-#' @return A named list of data.tables, one per .dlf file type, with a sim column identifying the originating simulation.
+#' @return A named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation.
 #' @export
 load_daisy_outputs <- function(dir, required_outputs = "all") {
   if (!dir.exists(dir)) {
@@ -87,7 +87,7 @@ load_daisy_outputs <- function(dir, required_outputs = "all") {
       # Drop units row
       dt <- dt[-1]
 
-      set(dt, j = "sim", value = sim_id)
+      set(dt, j = "sim_id", value = sim_id)
       dt
     }
 
@@ -96,8 +96,8 @@ load_daisy_outputs <- function(dir, required_outputs = "all") {
 
     all_data <- rbindlist(dt_list, use.names = TRUE)
 
-    # Type conversion for all columns except 'sim'
-    cols <- setdiff(names(all_data), "sim")
+    # Type conversion for all columns except 'sim_id'
+    cols <- setdiff(names(all_data), "sim_id")
     for (col in cols) {
       set(
         all_data,

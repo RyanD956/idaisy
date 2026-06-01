@@ -3,7 +3,7 @@
 #' @importFrom whisker whisker.render
 #' @param df A dataframe containing the parameters for each simulation. Each row will correspond to one simulation script.
 #' @param template_path The file path to a whisker template (.txt) that will be used to generate the daisy scripts. The template should use tags that match the column names in `df`.
-#' @param dir The directory where the generated daisy scripts will be saved. Each simulation will be saved in a subfolder named after the `sim_name` column in `df`.
+#' @param dir The directory where the generated daisy scripts will be saved. Each simulation will be saved in a subfolder named after the `sim_id` column in `df`.
 #' @return Invisibly returns a character vector of the paths to the created .dai files.
 #' @export
 #'
@@ -12,14 +12,14 @@ create_daisy_scripts <- function(df, template_path, dir) {
   if (!is.data.frame(df)) {
     stop("`df` must be a data.frame.", call. = FALSE)
   }
-  if (!"sim_name" %in% names(df)) {
-    stop("`df` must contain a 'sim_name' column.", call. = FALSE)
+  if (!"sim_id" %in% names(df)) {
+    stop("`df` must contain a 'sim_id' column.", call. = FALSE)
   }
-  if (any(is.na(df$sim_name)) || any(df$sim_name == "")) {
-    stop("`sim_name` contains missing/empty values.", call. = FALSE)
+  if (any(is.na(df$sim_id)) || any(df$sim_id == "")) {
+    stop("`sim_id` contains missing/empty values.", call. = FALSE)
   }
-  if (anyDuplicated(df$sim_name) > 0) {
-    stop("`sim_name` contains duplicate values.", call. = FALSE)
+  if (anyDuplicated(df$sim_id) > 0) {
+    stop("`sim_id` contains duplicate values.", call. = FALSE)
   }
   if (!file.exists(template_path)) {
     stop("Template file doesn't exist.", call. = FALSE)
@@ -39,10 +39,10 @@ create_daisy_scripts <- function(df, template_path, dir) {
   local_df$date_created <- Sys.Date()
   local_df$dir <- dir
   local_df$template <- template_name
-  local_df$sim_name <- gsub('[<>:"/\\\\|?*]', "_", local_df$sim_name)
+  local_df$sim_id <- gsub('[<>:"/\\\\|?*]', "_", local_df$sim_id)
 
   # Create simulation directories
-  sim_dirs <- file.path(dir, local_df$sim_name)
+  sim_dirs <- file.path(dir, local_df$sim_id)
 
   for (d in sim_dirs) {
     dir.create(d, recursive = TRUE, showWarnings = FALSE)
@@ -65,8 +65,8 @@ create_daisy_scripts <- function(df, template_path, dir) {
     text <- gsub("\r\n", "\n", text, fixed = TRUE)
 
     # Add to out_paths
-    sim_name <- row_list$sim_name[[1]]
-    out_paths[i] <- file.path(sim_dirs[i], paste0(sim_name, ".dai"))
+    sim_id <- row_list$sim_id[[1]]
+    out_paths[i] <- file.path(sim_dirs[i], paste0(sim_id, ".dai"))
 
     # Write file
     cat(text, file = out_paths[i], sep = "")
