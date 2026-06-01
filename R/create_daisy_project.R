@@ -15,6 +15,8 @@ create_daisy_project <- function(dir) {
   dir.create(file.path(dir, "inputs"))
   dir.create(file.path(dir, "outputs"))
   dir.create(file.path(dir, "simulations"))
+  dir.create(file.path(dir, "data"))
+  dir.create(file.path(dir, "R"))
 
   message("Project structure created at: ", dir)
 }
