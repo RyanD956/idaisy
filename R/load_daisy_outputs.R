@@ -159,7 +159,7 @@ load_daisy_outputs <- function(
     ]
 
     invisible(combined_results)
+  } else {
+    invisible(results)
   }
-
-  invisible(results)
 }
