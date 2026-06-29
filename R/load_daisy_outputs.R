@@ -150,12 +150,15 @@ load_daisy_outputs <- function(
     }
 
     # Merge list items into one dataframe
-    combined <- Reduce(
+    combined_results <- Reduce(
       function(x, y) cbind(x, y),
       results
     )
 
-    combined <- combined[, !duplicated(names(combined)), with = FALSE]
+    combined_results <- combined_results[,
+      !duplicated(names(combined_results)),
+      with = FALSE
+    ]
 
     invisible(combined_results)
   } else {
