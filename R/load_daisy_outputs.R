@@ -5,8 +5,6 @@
 #' @importFrom janitor make_clean_names
 #' @importFrom utils type.convert
 #' @importFrom tools file_path_sans_ext
-#' @importFrom purrr reduce
-#' @importFrom dplyr select bind_cols
 #' @param dir Directory containing the Daisy simulation outputs. The function will search for .dlf files in all subdirectories. Expected structure is dir/sim_name/outputsfile.dlf; sim_name is derived from two levels above each .dlf file.
 #' @param required_outputs A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.
 #' @param sims_to_load A character vector of simulation names to load, e.g. c("sim1", "sim2"). If "all", all simulations found in the directory will be loaded.
