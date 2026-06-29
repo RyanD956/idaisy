@@ -4,15 +4,24 @@
 \alias{load_daisy_outputs}
 \title{Collate outputs from Daisy simulations into a list of data.tables}
 \usage{
-load_daisy_outputs(dir, required_outputs = "all")
+load_daisy_outputs(
+  dir,
+  required_outputs = "all",
+  sims_to_load = "all",
+  combine_results = FALSE
+)
 }
 \arguments{
 \item{dir}{Directory containing the Daisy simulation outputs. The function will search for .dlf files in all subdirectories. Expected structure is dir/sim_name/outputsfile.dlf; sim_name is derived from two levels above each .dlf file.}
 
 \item{required_outputs}{A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.}
+
+\item{sims_to_load}{A character vector of simulation names to load, e.g. c("sim1", "sim2"). If "all", all simulations found in the directory will be loaded.}
+
+\item{combine_results}{Whether to combine all output types into a single data.table. Defaults to FALSE (returns a list of dataframes). If TRUE, all output types must have the same number of rows.}
 }
 \value{
-A named list of data.tables, one per .dlf file type, with a sim column identifying the originating simulation.
+A named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation.
 }
 \description{
 Collate outputs from Daisy simulations into a list of data.tables

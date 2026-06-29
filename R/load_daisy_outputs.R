@@ -7,13 +7,15 @@
 #' @importFrom tools file_path_sans_ext
 #' @param dir Directory containing the Daisy simulation outputs. The function will search for .dlf files in all subdirectories. Expected structure is dir/sim_name/outputsfile.dlf; sim_name is derived from two levels above each .dlf file.
 #' @param required_outputs A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.
+#' @param sims_to_load A character vector of simulation names to load, e.g. c("sim1", "sim2"). If "all", all simulations found in the directory will be loaded.
+#' @param combine_results Whether to combine all output types into a single data.table. Defaults to FALSE (returns a list of dataframes). If TRUE, all output types must have the same number of rows.
 #' @return A named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation.
 #' @export
 load_daisy_outputs <- function(
   dir,
   required_outputs = "all",
   sims_to_load = "all",
-  combine_results = TRUE
+  combine_results = FALSE
 ) {
   if (!dir.exists(dir)) {
     stop("Directory doesn't exist.", call. = FALSE)

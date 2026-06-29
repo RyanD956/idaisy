@@ -11,7 +11,7 @@ create_daisy_scripts(df, template_path, dir)
 
 \item{template_path}{The file path to a whisker template (.txt) that will be used to generate the daisy scripts. The template should use tags that match the column names in \code{df}.}
 
-\item{dir}{The directory where the generated daisy scripts will be saved. Each simulation will be saved in a subfolder named after the \code{sim_name} column in \code{df}.}
+\item{dir}{The directory where the generated daisy scripts will be saved. Each simulation will be saved in a subfolder named after the \code{sim_id} column in \code{df}.}
 }
 \value{
 Invisibly returns a character vector of the paths to the created .dai files.
