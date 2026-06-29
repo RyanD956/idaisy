@@ -9,7 +9,12 @@
 #' @param required_outputs A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.
 #' @return A named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation.
 #' @export
-load_daisy_outputs <- function(dir, required_outputs = "all") {
+load_daisy_outputs <- function(
+  dir,
+  required_outputs = "all",
+  sims_to_load = "all",
+  combine_results = TRUE
+) {
   if (!dir.exists(dir)) {
     stop("Directory doesn't exist.", call. = FALSE)
   }
@@ -119,5 +124,28 @@ load_daisy_outputs <- function(dir, required_outputs = "all") {
   }
 
   message("Successfully loaded ", length(results), " file type(s).")
+
+  if (combine_results) {
+    # Check all list items have same number of rows
+    n_rows <- vapply(results, nrow, integer(1))
+
+    if (!all(n_rows == n_rows[1])) {
+      stop(
+        message(
+          "Can't combine data frames: rows counts differ. Select different outputs or set combine_results = FALSE."
+        )
+      )
+    }
+
+    # Merge list items into one dataframe
+    combined_results <- do.call(cbind, results)
+    combined_results <- combined_results[,
+      !duplicated(names(combined_results)),
+      drop = FALSE
+    ]
+
+    invisible(combined_results)
+  }
+
   invisible(results)
 }
