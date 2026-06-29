@@ -44,6 +44,18 @@ load_daisy_outputs <- function(
   }
 
   files_to_load <- all_files[file_names %in% outputs_to_load]
+
+  # Keep only requested simulations
+  if (!identical(sims_to_load, "all")) {
+    sim_ids <- basename(dirname(dirname(files_to_load)))
+
+    files_to_load <- files_to_load[sim_ids %in% sims_to_load]
+
+    if (length(files_to_load) == 0) {
+      stop("None of the requested simulations were found.", call. = FALSE)
+    }
+  }
+
   files_split <- split(files_to_load, basename(files_to_load))
 
   file_types <- file_path_sans_ext(names(files_split))
