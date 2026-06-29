@@ -5,12 +5,16 @@
 #' @importFrom janitor make_clean_names
 #' @importFrom utils type.convert
 #' @importFrom tools file_path_sans_ext
+#' @importFrom purrr reduce
+#' @importFrom dplyr select bind_cols
 #' @param dir Directory containing the Daisy simulation outputs. The function will search for .dlf files in all subdirectories. Expected structure is dir/sim_name/outputsfile.dlf; sim_name is derived from two levels above each .dlf file.
 #' @param required_outputs A character vector of output types to load, e.g. c("harvest", "crop_prod"). If "all", all unique .dlf file types will be loaded.
 #' @param sims_to_load A character vector of simulation names to load, e.g. c("sim1", "sim2"). If "all", all simulations found in the directory will be loaded.
 #' @param combine_results Whether to combine all output types into a single data.table. Defaults to FALSE (returns a list of dataframes). If TRUE, all output types must have the same number of rows.
-#' @return A named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation.
+#' @return If combine_results is FALSE, a named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation. If combine_results is TRUE, a single data.table with all output types combined.
 #' @export
+#'
+dir <- r"(C:\Users\rd44584\OneDrive - The James Hutton Institute\24F PhD Project\02_crop_modelling\Daisy modelling\projects\spring_barley_field_trials\simulations)"
 load_daisy_outputs <- function(
   dir,
   required_outputs = "all",
@@ -145,17 +149,32 @@ load_daisy_outputs <- function(
 
     if (!all(n_rows == n_rows[1])) {
       stop(
-        message(
-          "Can't combine data frames: rows counts differ. Select different outputs or set combine_results = FALSE."
-        )
+        "Can't combine data frames: rows counts differ. Select different outputs or set combine_results = FALSE."
       )
     }
 
     # Merge list items into one dataframe
-    combined_results <- do.call(cbind, results)
+    combined <- do.call(data.table::cbind, results)
+    combined <- combined[, !duplicated(names(combined)), with = FALSE]
+
+    combined <- Reduce(
+      function(x, y) cbind(x, y),
+      results
+    )
+
+    combined <- combined[, !duplicated(names(combined)), with = FALSE]
+
+    combined_results <- results |>
+      reduce(~ bind_cols(.x, .y, .name_repair = "minimal"))
+
+    keep <- !duplicated(names(combined_results))
+    combined_results <- combined_results[, keep]
+
+    combined_results <- as.data.frame(do.call(cbind, results))
+
     combined_results <- combined_results[,
-      !duplicated(names(combined_results)),
-      drop = FALSE
+      unique(names(combined_results)),
+      with = FALSE
     ]
 
     invisible(combined_results)
