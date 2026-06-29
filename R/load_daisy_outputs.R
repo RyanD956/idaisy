@@ -13,8 +13,6 @@
 #' @param combine_results Whether to combine all output types into a single data.table. Defaults to FALSE (returns a list of dataframes). If TRUE, all output types must have the same number of rows.
 #' @return If combine_results is FALSE, a named list of data.tables, one per .dlf file type, with a sim_id column identifying the originating simulation. If combine_results is TRUE, a single data.table with all output types combined.
 #' @export
-#'
-dir <- r"(C:\Users\rd44584\OneDrive - The James Hutton Institute\24F PhD Project\02_crop_modelling\Daisy modelling\projects\spring_barley_field_trials\simulations)"
 load_daisy_outputs <- function(
   dir,
   required_outputs = "all",
@@ -154,28 +152,12 @@ load_daisy_outputs <- function(
     }
 
     # Merge list items into one dataframe
-    combined <- do.call(data.table::cbind, results)
-    combined <- combined[, !duplicated(names(combined)), with = FALSE]
-
     combined <- Reduce(
       function(x, y) cbind(x, y),
       results
     )
 
     combined <- combined[, !duplicated(names(combined)), with = FALSE]
-
-    combined_results <- results |>
-      reduce(~ bind_cols(.x, .y, .name_repair = "minimal"))
-
-    keep <- !duplicated(names(combined_results))
-    combined_results <- combined_results[, keep]
-
-    combined_results <- as.data.frame(do.call(cbind, results))
-
-    combined_results <- combined_results[,
-      unique(names(combined_results)),
-      with = FALSE
-    ]
 
     invisible(combined_results)
   } else {
