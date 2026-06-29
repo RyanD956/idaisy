@@ -149,12 +149,10 @@ load_daisy_outputs <- function(
       )
     }
 
-    # Merge list items into one dataframe
-    combined_results <- Reduce(
-      function(x, y) cbind(x, y),
-      results
-    )
+    # Column-bind all the dataframes together side-by-side
+    combined_results <- do.call(cbind, unname(results)) # unname to stop appending list names to column names
 
+    # Drop the duplicate columns (keeps the first occurrence of year, month, date, etc.)
     combined_results <- combined_results[,
       !duplicated(names(combined_results)),
       with = FALSE
